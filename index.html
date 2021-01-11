@@ -1,26 +1,93 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie-edge">
-    <title>Canvas</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        <title>Canvas</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+        <style>
         body {
-            background-color: #ccc;
-            text-align: center;
+           margin: 30px;
+           position: relative;
         }
         canvas {
-            background-color: #B49860
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-    </style>
-</head>
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+        .wrapper {
+            position: relative;
+            width: 482px;
+            height: 484px;
+            overflow: hidden;
+            margin-right: 20px;
+        }
+        .wrapper-2 {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
 
-<body>
-    <canvas id="my-canvas" width="800" height="400">
-        This browser does not support canvas!
-    </canvas>
-    <script src="app.js"></script>
-</body>
+        .wrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .chart-wrapper{
+            position:absolute;
+            top: -20px;
+            right: 70px;
+            width: 380px;
+            height: 380px;
+        }
+        #draw {
+            border: 1px solid black;
+        }
+        #draw2 {
+            border: 1px solid black;
+        }
+        #animation {
+            border: 1px solid black;
+            background-image:url("https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2019%2F0513%2Fr542285_2_1296x729_16%2D9.jpg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        #line, #line2 {
+            left: 53px;
+        }
+        </style>
+    </head>
 
+    <body>
+        <input type="button" id="btn" value="Play">
+        <label>X-pos<input type="range" id="xpos" min="0" value="0" max="318" step="1"></label><br>
+
+        <div class="container">
+
+            <div class="wrapper">
+                <div class="chart-wrapper">
+                  <canvas id="myChart" width="300" height="300"></canvas>
+                  <canvas id="line" width="318" height="330"></canvas>
+                </div>
+                <canvas id="draw"></canvas>
+            </div>
+            <div class="wrapper">
+                <div class="chart-wrapper">
+                  <canvas id="myChart2" width="300" height="300"></canvas>
+                  <canvas id="line2" width="318" height="330"></canvas>
+                </div>
+                <canvas id="draw2"></canvas>
+            </div>
+            <div class="wrapper-2">
+                <canvas id="animation"></canvas>
+            </div>
+        </div>  
+        <script src="animation.js"></script>
+    </body>
 </html>
