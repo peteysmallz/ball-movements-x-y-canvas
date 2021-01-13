@@ -1,9 +1,25 @@
-// Assuming ball starts at 21 ft out and about 13 feet high
+// Assuming ball starts at 19.07 ft out and about 13.5 feet high
+
+const imageHeight = 513;
+const imageWidth = 908;
+
+const imageDomain = [-4.5, 28]; // used in imageOverlayGrid.js
+const imageRange = [0.2, 18]; // used in imageOverlayGrid.js
+
+const shotXRange = 638 // 538px + 100px;
+const shotYRange = imageHeight;
+
+const graphWidth = 324;
+const graphHeight = 320;
+
+const graphXOffset = 53; // could be different for the two different charts
+
+const offScreenValue = -50;
 
 const canvas = document.getElementById('animation')
 const c = canvas.getContext('2d')
-canvas.width = 856;
-canvas.height = 482;
+canvas.width = imageWidth;
+canvas.height = imageHeight;
 
 let line = [];
 let line2 = [];
@@ -15,44 +31,52 @@ let ballAndLineArray2 = [];
 let cx = document.getElementById('xpos');
 cx.addEventListener('change', moveSlider, true);
 
-// Line
+// Lines
 
 var lineCanvas = document.getElementById("line");
 var firstLine = lineCanvas.getContext("2d");
-const w = 320;
-const h = lineCanvas.height;
 
-var lineCanvas = document.getElementById("line2");
-var secondLine = lineCanvas.getContext("2d");
+lineCanvas.width = graphWidth;
+lineCanvas.height = graphHeight;
 
+var line2Canvas = document.getElementById("line2");
+var secondLine = line2Canvas.getContext("2d");
+
+line2Canvas.width = graphWidth;
+line2Canvas.height = graphHeight;
 
 let xPos = 0;
 let playing = false;
 
 function createVertLine(vertLine, position) {
-  vertLine.clearRect(0,0, w, h);
+  vertLine.clearRect(0,0, graphWidth, graphHeight);
   
   // Draw new one...
   vertLine.beginPath();
   vertLine.strokeStyle = "black";
   vertLine.lineWidth = 1;
-  vertLine.moveTo(position, 400);
-  vertLine.lineTo(position, 0);
+  vertLine.moveTo(position, 0);
+  vertLine.lineTo(position, graphHeight);
   vertLine.stroke();
 }
 
 function moveSlider() {
-  let sliderX = cx.value;
+  let sliderX = parseInt(cx.value);
   
   createVertLine(firstLine, sliderX);
   createVertLine(secondLine, sliderX);
+  
   xPos = parseInt(sliderX);
 
   // Update Ball position
-  ballAndLineArray.forEach((item, i) => {
-    // 82 is the sapce from left border to y-axix
-    item.ball.x = (ballAndLineArray2[0] && ballAndLineArray2[0].line.filter(item => item.x === (xPos + 82))[0]) && 800 - getX(ballAndLineArray2[0].line.filter(item => item.x === (xPos + 82))[0].y) || -200;
-    item.ball.y = item.line.filter(item => item.x === (xPos + 82))[0] && item.line.filter(item => item.x === (xPos + 82))[0].y || 20
+  ballAndLineArray2[0] && ballAndLineArray.forEach((item, i) => {
+    // Why do I need to add + 12 here?
+    // Need to allow for multiple lines
+    let newLine = ballAndLineArray2.map(item => item.line).flat();
+    item.ball.x = newLine.filter(item => item.x === xPos)[0] && getX(newLine.filter(item => item.x === xPos)[0].y + 12) || offScreenValue;
+    
+    // Why do I need to subtract 10 here?
+    item.ball.y = item.line.filter(item => item.x === xPos)[0] && getY((graphHeight - 10) - item.line.filter(item => item.x === xPos)[0].y) || offScreenValue
   })
 }
 
@@ -64,7 +88,7 @@ function animateVerticalTimeLine() {
 
   xPos += 1;
   
-  if(xPos >= w) {
+  if(xPos >= graphWidth) {
     // xPos = 0;
     playing = false;
     btn.value = "Play";
@@ -77,7 +101,6 @@ function animateVerticalTimeLine() {
 }
 
 // Draw line on graph
-
 const canvas2 = document.getElementById('draw');
 const ctx = canvas2.getContext('2d');
 canvas2.width = 400;
@@ -117,6 +140,8 @@ const ctxx = canvas3.getContext('2d');
 canvas3.width = 400;
 canvas3.height = 400;
 
+createLine(ctxx);
+
 let isDrawing2 = false;
 
 canvas3.addEventListener('mousedown', (e) => {
@@ -140,8 +165,6 @@ canvas3.addEventListener('mouseup', () => {
 canvas3.addEventListener('mouseout', () => {
   isDrawing2 = false;
 });
-
-
 
 // Animation
 
@@ -187,7 +210,7 @@ const computePoints = function(line) {
     for (let px = Math.round(point1.x); px <= point2.x; px++) {
       const deltaX = px - point1.x;
       const py = point2.y <= point1.y ? Math.round(point1.y + deltaYperX * deltaX * -1) : Math.round(point1.y + deltaYperX * deltaX); // Math round is causing slight choppiness
-      linePoints.push({ x: px, y: py });
+      linePoints.push({ x: px - graphXOffset , y: graphHeight - py });
     }
   }
   return linePoints;
@@ -214,16 +237,10 @@ Ball.prototype.update = function () {
 };
 
 function getX(x) {
-  var graphWidth = 330;
-  var imageWidth = 720;
-
   return x * (imageWidth/graphWidth);
 }
 
 function getY(y) {
-  var graphHeight = 400;
-  var imageHeight = 484;
-
   return y * (imageHeight/graphHeight);
 }
 
@@ -240,6 +257,20 @@ function draw(e, context, lineArray, isDrawing) {
   lineArray.push({ x: lastX, y: lastY });
 }
 
+function erase(e, context, lineArray, isDrawing) {
+  if (!isDrawing) return; // stop the fn from running when they are not moused down
+
+  context.strokeStyle = `white`;
+  context.lineWidth = 10;
+  context.beginPath();
+  context.moveTo(lastX, lastY);
+  context.lineTo(e.offsetX, e.offsetY);
+  context.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+
+  lineArray.push({ x: lastX, y: lastY });
+}
+
 function createLine(context) {
   context.strokeStyle = '#BADA55';
   context.lineJoin = 'round';
@@ -247,97 +278,3 @@ function createLine(context) {
   context.lineWidth = 4;
   context.globalCompositeOperation = 'multiply';
 }
-
-// Charts
-var emptyLineChart = document.getElementById("myChart").getContext('2d');
-
-var myChart = new Chart(emptyLineChart, {
-    type: 'line',
-    data:{
-      labels: [0, 1, 2, 3, 4, 5],
-      data: [
-        {
-          x: 0,
-          y: 18
-        },
-        {
-          x: 2,
-          y: 10
-        }
-      ]
-    },
-    options: {
-
-      scales: {
-        xAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Time (seconds)'
-          },
-            ticks: {
-                suggestedMin: 0,
-                suggestedMax: 4.2,
-                stepSize: 0.5
-            }
-        }],
-        yAxes: [{
-          ticks: {
-            min: 5,
-            max: 18,
-            stepSize: 1
-          },
-            scaleLabel: {
-              display: true,
-              labelString: 'Height (ft)'
-            }
-        }]
-      }
-    }
-});
-
-var emptyLineChart2 = document.getElementById("myChart2").getContext('2d');
-
-var myChart2 = new Chart(emptyLineChart2, {
-    type: 'line',
-    data:{
-      labels: [0, 1, 2, 3, 4, 5],
-      data: [
-        {
-          x: 0,
-          y: 18
-        },
-        {
-          x: 2,
-          y: 10
-        }
-      ]
-    },
-    options: {
-
-      scales: {
-        xAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Time (seconds)'
-          },
-            ticks: {
-                suggestedMin: 0,
-                suggestedMax: 4.2,
-                stepSize: 0.5
-            }
-        }],
-        yAxes: [{
-          ticks: {
-            min: 0,
-            max: 30
-          },
-            scaleLabel: {
-              display: true,
-              labelString: 'Distance from basket (ft)'
-            }
-        }]
-      }
-    }
-});
