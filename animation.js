@@ -1,19 +1,12 @@
-// Assuming ball starts at 19.07 ft out and about 13.5 feet high
-
 const imageHeight = 513;
 const imageWidth = 908;
-
 const imageDomain = [-4.5, 28]; // used in imageOverlayGrid.js
 const imageRange = [0.2, 18]; // used in imageOverlayGrid.js
-
 const shotXRange = 638 // 538px + 100px;
 const shotYRange = imageHeight;
-
 const graphWidth = 324;
 const graphHeight = 320;
-
-const graphXOffset = 73; // could be different for the two different charts
-
+const graphXOffset = 73;
 const offScreenValue = -50;
 
 const canvas = document.getElementById('animation')
@@ -28,8 +21,6 @@ let ballAndLineArray2 = [];
 
 // Draw or erase
 let tooltype = 'draw';
-
-document.documentElement.style.cursor = 'url("http://www.iwansfactory.com/tycoon/movecursor.png"), default';
 
 // Range Slider
 let cx = document.getElementById('xpos');
@@ -50,18 +41,6 @@ line2Canvas.height = graphHeight;
 
 let xPos = 0;
 let playing = false;
-
-function createVertLine(vertLine, position) {
-  vertLine.clearRect(0,0, graphWidth, graphHeight);
-  
-  // Draw new one...
-  vertLine.beginPath();
-  vertLine.strokeStyle = "black";
-  vertLine.lineWidth = 1;
-  vertLine.moveTo(position, 0);
-  vertLine.lineTo(position, graphHeight);
-  vertLine.stroke();
-}
 
 function moveSlider() {
   let sliderX = parseInt(cx.value);
@@ -113,27 +92,27 @@ function animateVerticalTimeLine() {
 }
 
 // Draw line on graph
-const canvas2 = document.getElementById('draw');
-const ctx = canvas2.getContext('2d');
-canvas2.width = 400;
-canvas2.height = 400;
+const canvas1 = document.getElementById('draw');
+const context1 = canvas1.getContext('2d');
+canvas1.width = 400;
+canvas1.height = 400;
 
 // Line style
-createLine(ctx);
+createLine(context1);
 
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 
-canvas2.addEventListener('mousedown', (e) => {
+canvas1.addEventListener('mousedown', (e) => {
     line = [];
     isDrawing = true;
   [lastX, lastY] = [e.offsetX, e.offsetY];
 });
 
-canvas2.addEventListener('mousemove', e => draw(e, ctx, line, isDrawing));
+canvas1.addEventListener('mousemove', e => draw(e, context1, line, isDrawing));
 
-canvas2.addEventListener('mouseup', () => {
+canvas1.addEventListener('mouseup', () => {
   isDrawing = false;
   if (tooltype == 'draw') {
     ballAndLineArray.push({
@@ -143,31 +122,31 @@ canvas2.addEventListener('mouseup', () => {
   }
 });
 
-canvas2.addEventListener('mouseout', () => {
+canvas1.addEventListener('mouseout', () => {
   isDrawing = false;
 });
 
 // second Chart
-const canvas3 = document.getElementById('draw2');
-const ctxx = canvas3.getContext('2d');
-canvas3.width = 400;
-canvas3.height = 400;
+const canvas2 = document.getElementById('draw2');
+const context2 = canvas2.getContext('2d');
+canvas2.width = 400;
+canvas2.height = 400;
 
-createLine(ctxx);
+createLine(context2);
 
 let isDrawing2 = false;
 
-canvas3.addEventListener('mousedown', (e) => {
+canvas2.addEventListener('mousedown', (e) => {
   line2 = [];
   isDrawing2 = true;
   [lastX, lastY] = [e.offsetX, e.offsetY];
 });
 
-canvas3.addEventListener('mousemove', e => {
-  draw2(e, ctxx, line2, isDrawing2)
+canvas2.addEventListener('mousemove', e => {
+  draw2(e, context2, line2, isDrawing2)
 });
 
-canvas3.addEventListener('mouseup', () => {
+canvas2.addEventListener('mouseup', () => {
   isDrawing2 = false;
 
   ballAndLineArray2.push({
@@ -176,7 +155,7 @@ canvas3.addEventListener('mouseup', () => {
   })
 });
 
-canvas3.addEventListener('mouseout', () => {
+canvas2.addEventListener('mouseout', () => {
   isDrawing2 = false;
 });
 
@@ -195,8 +174,6 @@ animate();
 document.getElementById("btn").addEventListener('click', function(e) {
   e.preventDefault();
 
-  console.log(ballAndLineArray, ballAndLineArray2)
-
   if(playing) {
     // pause...
     playing = false;
@@ -210,24 +187,6 @@ document.getElementById("btn").addEventListener('click', function(e) {
 });
 
 // Utils
-const computePoints = function(line) {
-  let linePoints = [];
-  for (let p = 0; p < line.length - 1; p++) {
-    const point1 = line[p];
-    const point2 = line[p + 1];
-    
-    const distanceX = Math.abs(point2.x - point1.x);
-    const distanceY = Math.abs(point2.y - point1.y);
-    const deltaYperX = distanceY / distanceX;
-    
-    for (let px = Math.round(point1.x); px <= point2.x; px++) {
-      const deltaX = px - point1.x;
-      const py = point2.y <= point1.y ? Math.round(point1.y + deltaYperX * deltaX * -1) : Math.round(point1.y + deltaYperX * deltaX); // Math round is causing slight choppiness
-      linePoints.push({ x: px - graphXOffset , y: graphHeight - py });
-    }
-  }
-  return linePoints;
-};
 
 // Ball 
 function Ball(x, y, radius, color) {
@@ -248,6 +207,27 @@ Ball.prototype.draw = function () {
 Ball.prototype.update = function () {
   this.draw();
 };
+
+// Fill in missing points on line
+const computePoints = function(line) {
+  let linePoints = [];
+  for (let p = 0; p < line.length - 1; p++) {
+    const point1 = line[p];
+    const point2 = line[p + 1];
+    
+    const distanceX = Math.abs(point2.x - point1.x);
+    const distanceY = Math.abs(point2.y - point1.y);
+    const deltaYperX = distanceY / distanceX;
+    
+    for (let px = Math.round(point1.x); px <= point2.x; px++) {
+      const deltaX = px - point1.x;
+      const py = point2.y <= point1.y ? Math.round(point1.y + deltaYperX * deltaX * -1) : Math.round(point1.y + deltaYperX * deltaX); // Math round is causing slight choppiness
+      linePoints.push({ x: px - graphXOffset , y: graphHeight - py });
+    }
+  }
+  return linePoints;
+};
+
 
 function getX(x) {
   return x * (imageWidth/graphWidth);
@@ -349,4 +329,14 @@ function createLine(context) {
   context.lineCap = 'round';
   context.lineWidth = 4;
   context.globalCompositeOperation = 'multiply';
+}
+
+function createVertLine(vertLine, position) {
+  vertLine.clearRect(0,0, graphWidth, graphHeight);
+  vertLine.beginPath();
+  vertLine.strokeStyle = "black";
+  vertLine.lineWidth = 1;
+  vertLine.moveTo(position, 0);
+  vertLine.lineTo(position, graphHeight);
+  vertLine.stroke();
 }

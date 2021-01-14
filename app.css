@@ -124,6 +124,7 @@ canvas {
 .slider-color::-moz-range-thumb {
   width: 25px;
   height: 25px;
+  border: 2px solid white;
   border-radius: 50%;
   background: black;
   cursor: pointer;
