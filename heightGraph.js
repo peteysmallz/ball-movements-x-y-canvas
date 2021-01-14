@@ -48,7 +48,7 @@ const setupChart = () => {
       .attr("x",0 - (HEIGHT / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Distance from the ground (feet)"); 
+      .text("Distance from the ground (ft.)"); 
 
   svg.append("g").selectAll("dot")
     .data(intialBballValue)

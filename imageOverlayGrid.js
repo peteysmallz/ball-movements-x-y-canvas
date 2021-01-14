@@ -34,9 +34,9 @@ svg.append('g')
 
 // text label for the x axis
 svg.append("text")             
-    .attr("transform", "translate(" + (WIDTH/2) + " ," + (HEIGHT - MARGIN.top - 3) + ")")
+    .attr("transform", "translate(" + (WIDTH/2 - 50) + " ," + (HEIGHT - MARGIN.top - 3) + ")")
     .style("text-anchor", "middle")
-    .text("Feet");
+    .text("X Position from Basket (ft.)");
 
 // text label for the y axis
 svg.append("text")
@@ -45,5 +45,5 @@ svg.append("text")
     .attr("x",0 - (HEIGHT / 2))
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .text("Feet"); 
+    .text("Y Position from Ground (ft.)"); 
   

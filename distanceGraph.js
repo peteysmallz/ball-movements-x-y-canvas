@@ -49,7 +49,7 @@ const setupDistanceChart = () => {
       .attr("x",0 - (HEIGHT / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Horizontal position from basket (feet)");
+      .text("Horizontal position from basket (ft.)");
 
   svg.append("g").selectAll("dot")
     .data(intialBballValue)

@@ -13,7 +13,9 @@ canvas {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 1000px;
+  margin: 0 auto;
+
 }
 .text-container {
   display: block;
@@ -42,7 +44,6 @@ canvas {
 .chart-container {
   display: flex;
   flex-direction: row;
-  padding-left: 20px;
   height: 400px;
 }
 .chart-wrapper{
