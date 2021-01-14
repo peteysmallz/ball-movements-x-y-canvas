@@ -32,7 +32,7 @@ svg.append('g')
   .attr('class', 'y axis')
   .call(yAxis);
 
-// text label for the y axis
+// text label for the x axis
 svg.append("text")             
     .attr("transform", "translate(" + (WIDTH/2) + " ," + (HEIGHT - MARGIN.top - 3) + ")")
     .style("text-anchor", "middle")
