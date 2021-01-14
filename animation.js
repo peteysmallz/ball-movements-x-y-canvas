@@ -26,6 +26,9 @@ let line2 = [];
 let ballAndLineArray = [];
 let ballAndLineArray2 = [];
 
+// Draw or erase
+let tooltype = 'draw';
+
 // Range Slider
 
 let cx = document.getElementById('xpos');
@@ -78,6 +81,17 @@ function moveSlider() {
     // Why do I need to subtract 10 here?
     item.ball.y = item.line.filter(item => item.x === xPos)[0] && getY((graphHeight - 10) - item.line.filter(item => item.x === xPos)[0].y) || offScreenValue
   })
+
+  ballAndLineArray[0] && ballAndLineArray2.forEach((item, i) => {
+    // Why do I need to add + 12 here?
+    // Need to allow for multiple Lines
+    let newLine = ballAndLineArray.map(item => item.line).flat();
+    item.ball.y = newLine.filter(item => item.x === xPos)[0] && getY((graphHeight - 10) - newLine.filter(item => item.x === xPos)[0].y) || offScreenValue;
+    
+    // Why do I need to subtract 10 here?
+    item.ball.x = item.line.filter(item => item.x === xPos)[0] && getX(item.line.filter(item => item.x === xPos)[0].y + 12) || offScreenValue
+  })
+
 }
 
 function animateVerticalTimeLine() {
@@ -86,13 +100,11 @@ function animateVerticalTimeLine() {
     return;
   }
 
-  xPos += 1;
+  xPos += 1; // Adjust to make the animation faster
   
   if(xPos >= graphWidth) {
-    // xPos = 0;
     playing = false;
     btn.value = "Play";
-
   }
   // Update slider value
   cx.value = xPos;
@@ -110,12 +122,13 @@ canvas2.height = 400;
 createLine(ctx);
 
 let isDrawing = false;
+
 let lastX = 0;
 let lastY = 0;
 
 canvas2.addEventListener('mousedown', (e) => {
-  line = [];
-  isDrawing = true;
+    line = [];
+    isDrawing = true;
   [lastX, lastY] = [e.offsetX, e.offsetY];
 });
 
@@ -123,11 +136,12 @@ canvas2.addEventListener('mousemove', e => draw(e, ctx, line, isDrawing));
 
 canvas2.addEventListener('mouseup', () => {
   isDrawing = false;
-
-  ballAndLineArray.push({
-    line: computePoints(line),
-    ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
-  })
+  if (tooltype == 'draw') {
+    ballAndLineArray.push({
+      line: computePoints(line),
+      ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
+    })
+  }
 });
 
 canvas2.addEventListener('mouseout', () => {
@@ -158,7 +172,8 @@ canvas3.addEventListener('mouseup', () => {
   isDrawing2 = false;
 
   ballAndLineArray2.push({
-    line: computePoints(line2)
+    line: computePoints(line2),
+    ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
   })
 });
 
@@ -167,12 +182,12 @@ canvas3.addEventListener('mouseout', () => {
 });
 
 // Animation
-
 const animate = () => {
   requestAnimationFrame(animate);
   requestAnimationFrame(moveSlider);
   c.clearRect(0, 0, canvas.width, canvas.height);
   ballAndLineArray.forEach(item => item.ball.update())
+  ballAndLineArray2.forEach(item => item.ball.update())
 }
 
 animate();
@@ -196,7 +211,6 @@ document.getElementById("btn").addEventListener('click', function(e) {
 });
 
 // Utils
-
 const computePoints = function(line) {
   let linePoints = [];
   for (let p = 0; p < line.length - 1; p++) {
@@ -247,28 +261,50 @@ function getY(y) {
 function draw(e, context, lineArray, isDrawing) {
   if (!isDrawing) return; // stop the fn from running when they are not moused down
 
-  context.strokeStyle = `black`;
   context.beginPath();
+
+  if(tooltype =='draw') {
+      context.globalCompositeOperation = 'source-over';
+      context.strokeStyle = 'black';  
+      context.lineWidth = 5;
+  } else {
+    context.strokeStyle = '#123456';
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+    context.lineWidth = 20;
+    context.globalCompositeOperation = 'destination-out';
+  }
+
   context.moveTo(lastX, lastY);
   context.lineTo(e.offsetX, e.offsetY);
   context.stroke();
   [lastX, lastY] = [e.offsetX, e.offsetY];
+  console.log(lastX, lastY, graphHeight)
 
-  lineArray.push({ x: lastX, y: lastY });
+  if (tooltype == 'draw') {
+    lineArray.push({ x: lastX, y: lastY });
+  } else {
+    console.log('erase')
+    // How to filter line on erase?
+    ballAndLineArray = ballAndLineArray.map(item => {
+      const radius = 9;
+      const inRangeX = item => lastX - graphXOffset - radius < item.x && item.x < lastX - graphXOffset + radius;
+      const inRangeY = item => (graphHeight - lastY) - radius < item.y && item.y < (graphHeight - lastY) + radius;
+      return {
+        ...item,
+        line: item.line
+        .filter(item => !isNaN(item.y))
+        .filter( // include all points not in the radius
+          item => !inRangeX(item) || !inRangeY(item)
+        )
+      }
+    })
+  }
 }
 
-function erase(e, context, lineArray, isDrawing) {
-  if (!isDrawing) return; // stop the fn from running when they are not moused down
 
-  context.strokeStyle = `white`;
-  context.lineWidth = 10;
-  context.beginPath();
-  context.moveTo(lastX, lastY);
-  context.lineTo(e.offsetX, e.offsetY);
-  context.stroke();
-  [lastX, lastY] = [e.offsetX, e.offsetY];
-
-  lineArray.push({ x: lastX, y: lastY });
+function use_tool(tool) {
+  tooltype = tool;
 }
 
 function createLine(context) {
