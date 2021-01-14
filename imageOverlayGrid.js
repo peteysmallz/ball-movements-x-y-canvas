@@ -36,7 +36,7 @@ svg.append('g')
 svg.append("text")             
     .attr("transform", "translate(" + (WIDTH/2) + " ," + (HEIGHT - MARGIN.top - 3) + ")")
     .style("text-anchor", "middle")
-    .text("Time (seconds)");
+    .text("Feet");
 
 // text label for the y axis
 svg.append("text")
