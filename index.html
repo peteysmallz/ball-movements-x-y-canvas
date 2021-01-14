@@ -1,158 +1,54 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie-edge">
-        <title>Canvas</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js" integrity="sha512-9H86d5lhAwgf2/u29K4N5G6pZThNOojI8kMT4nT4NHvVR02cM85M06KJRQXkI0XgQWBpzQyIyr8LVomyu1AQdw==" crossorigin="anonymous"></script>
-        <style>
-        body {
-          margin: 30px;
-          position: relative;
-        }
-        canvas {
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-        .container {
-          display: flex;
-          flex-direction: column;
-        }
-        .wrapper {
-          position: relative;
-          width: 410px;
-          height: 410px;
-          overflow: hidden;
-          margin-right: 40px;
-        }
-        .wrapper-2 {
-          position: relative;
-        }
-        .wrapper canvas {
-          position: absolute;
-          top: 0;
-          left: 0;
-        }
-        .chart-container {
-          display: flex;
-          flex-direction: row;
-          padding-left: 50px;
-          height: 450px;
-        }
-        .chart-wrapper{
-          position:absolute;
-          width: 380px;
-          height: 380px;
-        }
-        #distanceGraph {
-          position: relative;
-          left: 23px;
-        }
-        #heightGraph {
-          position: relative;
-          left: 23px;  
-        }
-        #animation {
-          border: 1px solid black;
-          background-image:url("https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2019%2F0513%2Fr542285_2_1296x729_16%2D9.jpg");
-          background-repeat: no-repeat;
-          background-size: 100% 100%;
-          width: 905px;
-          left: 30px;
-        }
-        #line, #line2 {
-          left: 53px;
-          top: 10px;
-        }
-        #grid {
-          position: absolute;   
-        }
-        #grid svg {
-          overflow: visible;
-        }
-        .axis-grid line {
-          stroke: #def;
-        }
-        #player {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 43px;
-          padding: 0 20px 0 20px;
-          background: #e2e2e2;
-          border-top: 1px solid #e2e2e2;
-          position: absolute;
-          left: 30px;
-          margin-bottom: 5px;
-          bottom: 1px;
-          width: 100%;
-          width: 843px;
-        }
-        .play-button {
-          width: 70px;
-          height: 30px;
-        }
-        .slider-color {
-          -webkit-appearance: none;
-          width: 100%;
-          height: 15px;
-          border-radius: 5px;
-          background: black;
-          outline: none;
-          opacity: 0.7;
-          -webkit-transition: opacity .15s ease-in-out;
-          transition: opacity .15s ease-in-out;
-          margin-left: 20px;
-        }
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie-edge">
+    <title>Canvas</title>
+    <script src="https://kit.fontawesome.com/ab82018e1c.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.3.1/d3.min.js" integrity="sha512-9H86d5lhAwgf2/u29K4N5G6pZThNOojI8kMT4nT4NHvVR02cM85M06KJRQXkI0XgQWBpzQyIyr8LVomyu1AQdw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="app.css">
+  </head>
 
-        .slider-color::-moz-range-thumb {
-          width: 25px;
-          height: 25px;
-          border: 2px solid white;
-          border-radius: 50%;
-          background: orange;
-          cursor: pointer;
-        }
-        </style>
-    </head>
-
-    <body>
-      <input type="button" value="draw" onclick="use_tool('draw');" />
-      <input type="button" value="erase" onclick="use_tool('erase');" />
-      <div class="container">
-        <div class="chart-container">
-        <div class="wrapper">
-            <div class="chart-wrapper">
-                <canvas id="myChart" width="380" height="380"></canvas>
-              <div id="heightGraph"></div>
-              <canvas id="line"></canvas>
-            </div>
-            <canvas id="draw"></canvas>
+  <body>
+    <div class="container">
+    <div class="controls-container">
+      <div class="radio-buttons-wrapper">
+        <input type="radio" class="radio-button" name="radioButtonTest" value="1" id="button1" checked  />
+        <label for="button1" onclick="use_tool('draw')"><i class="fas fa-pencil-alt"></i></label>
+        <input type="radio" class="radio-button" name="radioButtonTest" value="2" id="button2" />
+        <label for="button2" onclick="use_tool('erase');"><i class="fas fa-eraser"></i></label>
+      </div>
+      <div id="player">
+        <input type="button" id="btn" value="▶" class="play-button" />
+        <input class="slider-color" type="range" id="xpos" min="0" value="0" max="320" step="1"></label>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div class="wrapper">
+        <div class="chart-wrapper">
+          <canvas id="myChart" width="380" height="380"></canvas>
+          <div id="heightGraph"></div>
+          <canvas id="line"></canvas>
         </div>
-        <div class="wrapper">
-          <div class="chart-wrapper">
-             <div id="distanceGraph"></div>
-              <canvas id="line2"></canvas>
-            </div>
-            <canvas id="draw2"></canvas>
+        <canvas id="draw"></canvas>
+      </div>
+      <div class="wrapper">
+        <div class="chart-wrapper">
+          <div id="distanceGraph"></div>
+            <canvas id="line2"></canvas>
           </div>
+          <canvas id="draw2"></canvas>
         </div>
-        <div class="wrapper-2">
-            <div id="player">
-              <input type="button" id="btn" value="▶" class="play-button" />
-              <input class="slider-color" type="range" id="xpos" min="0" value="0" max="320" step="1"></label>
-            </div>
-            <canvas id="animation"></canvas>
-            <div id="grid"></div>
-        </div>
-      </div>  
-
-      <script src="animation.js"></script>
-      <script src="imageOverlayGrid.js"></script>
-      <script src="heightGraph.js"></script>
-      <script src="distanceGraph.js"></script>
-    </body>
+      </div>
+      <div class="wrapper-2">
+        <canvas id="animation"></canvas>
+        <div id="grid"></div>
+      </div>
+    </div>  
+    <script src="animation.js"></script>
+    <script src="imageOverlayGrid.js"></script>
+    <script src="heightGraph.js"></script>
+    <script src="distanceGraph.js"></script>
+  </body>
 </html>

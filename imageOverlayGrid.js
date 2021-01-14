@@ -1,6 +1,6 @@
-const WIDTH        = 947;
-const HEIGHT       = 532;
-const MARGIN       = { top: 0, right: 10, bottom: 20, left: 30 };
+const WIDTH        = 967;
+const HEIGHT       = 552;
+const MARGIN       = { top: 0, right: 10, bottom: 40, left: 50 };
 const INNER_WIDTH  = WIDTH - MARGIN.left - MARGIN.right;
 const INNER_HEIGHT = HEIGHT - MARGIN.top - MARGIN.bottom;
 const svg = d3.select('#grid').append('svg')
@@ -31,4 +31,19 @@ svg.append('g')
 svg.append('g')
   .attr('class', 'y axis')
   .call(yAxis);
+
+// text label for the y axis
+svg.append("text")             
+    .attr("transform", "translate(" + (WIDTH/2) + " ," + (HEIGHT - MARGIN.top - 3) + ")")
+    .style("text-anchor", "middle")
+    .text("Time (seconds)");
+
+// text label for the y axis
+svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - MARGIN.left)
+    .attr("x",0 - (HEIGHT / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Feet"); 
   

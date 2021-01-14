@@ -12,7 +12,7 @@ const shotYRange = imageHeight;
 const graphWidth = 324;
 const graphHeight = 320;
 
-const graphXOffset = 53; // could be different for the two different charts
+const graphXOffset = 73; // could be different for the two different charts
 
 const offScreenValue = -50;
 
@@ -29,13 +29,13 @@ let ballAndLineArray2 = [];
 // Draw or erase
 let tooltype = 'draw';
 
-// Range Slider
+document.documentElement.style.cursor = 'url("http://www.iwansfactory.com/tycoon/movecursor.png"), default';
 
+// Range Slider
 let cx = document.getElementById('xpos');
 cx.addEventListener('change', moveSlider, true);
 
 // Lines
-
 var lineCanvas = document.getElementById("line");
 var firstLine = lineCanvas.getContext("2d");
 
@@ -72,7 +72,7 @@ function moveSlider() {
   xPos = parseInt(sliderX);
 
   // Update Ball position
-  ballAndLineArray2[0] && ballAndLineArray.forEach((item, i) => {
+  ballAndLineArray2 && ballAndLineArray.forEach((item, i) => {
     // Why do I need to add + 12 here?
     // Need to allow for multiple lines
     let newLine = ballAndLineArray2.map(item => item.line).flat();
@@ -82,7 +82,7 @@ function moveSlider() {
     item.ball.y = item.line.filter(item => item.x === xPos)[0] && getY((graphHeight - 10) - item.line.filter(item => item.x === xPos)[0].y) || offScreenValue
   })
 
-  ballAndLineArray[0] && ballAndLineArray2.forEach((item, i) => {
+  ballAndLineArray && ballAndLineArray2.forEach((item, i) => {
     // Why do I need to add + 12 here?
     // Need to allow for multiple Lines
     let newLine = ballAndLineArray.map(item => item.line).flat();
@@ -122,7 +122,6 @@ canvas2.height = 400;
 createLine(ctx);
 
 let isDrawing = false;
-
 let lastX = 0;
 let lastY = 0;
 
@@ -165,7 +164,7 @@ canvas3.addEventListener('mousedown', (e) => {
 });
 
 canvas3.addEventListener('mousemove', e => {
-  draw(e, ctxx, line2, isDrawing2)
+  draw2(e, ctxx, line2, isDrawing2)
 });
 
 canvas3.addEventListener('mouseup', () => {
@@ -264,9 +263,9 @@ function draw(e, context, lineArray, isDrawing) {
   context.beginPath();
 
   if(tooltype =='draw') {
-      context.globalCompositeOperation = 'source-over';
-      context.strokeStyle = 'black';  
-      context.lineWidth = 5;
+    context.globalCompositeOperation = 'source-over';
+    context.strokeStyle = 'black';  
+    context.lineWidth = 5;
   } else {
     context.strokeStyle = '#123456';
     context.lineJoin = 'round';
@@ -279,13 +278,10 @@ function draw(e, context, lineArray, isDrawing) {
   context.lineTo(e.offsetX, e.offsetY);
   context.stroke();
   [lastX, lastY] = [e.offsetX, e.offsetY];
-  console.log(lastX, lastY, graphHeight)
 
   if (tooltype == 'draw') {
     lineArray.push({ x: lastX, y: lastY });
   } else {
-    console.log('erase')
-    // How to filter line on erase?
     ballAndLineArray = ballAndLineArray.map(item => {
       const radius = 9;
       const inRangeX = item => lastX - graphXOffset - radius < item.x && item.x < lastX - graphXOffset + radius;
@@ -302,6 +298,46 @@ function draw(e, context, lineArray, isDrawing) {
   }
 }
 
+function draw2(e, context, lineArray, isDrawing) {
+  if (!isDrawing) return; // stop the fn from running when they are not moused down
+
+  context.beginPath();
+
+  if(tooltype =='draw') {
+    context.globalCompositeOperation = 'source-over';
+    context.strokeStyle = 'black';  
+    context.lineWidth = 5;
+  } else {
+    context.strokeStyle = '#123456';
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+    context.lineWidth = 20;
+    context.globalCompositeOperation = 'destination-out';
+  }
+
+  context.moveTo(lastX, lastY);
+  context.lineTo(e.offsetX, e.offsetY);
+  context.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+
+  if (tooltype == 'draw') {
+    lineArray.push({ x: lastX, y: lastY });
+  } else {
+    ballAndLineArray2 = ballAndLineArray2.map(item => {
+      const radius = 9;
+      const inRangeX = item => lastX - graphXOffset - radius < item.x && item.x < lastX - graphXOffset + radius;
+      const inRangeY = item => (graphHeight - lastY) - radius < item.y && item.y < (graphHeight - lastY) + radius;
+      return {
+        ...item,
+        line: item.line
+        .filter(item => !isNaN(item.y))
+        .filter( // include all points not in the radius
+          item => !inRangeX(item) || !inRangeY(item)
+        )
+      }
+    })
+  }
+}
 
 function use_tool(tool) {
   tooltype = tool;
