@@ -18,40 +18,50 @@
   </head>
   <body>
     <div class="container">
-    <div class="controls-container">
-      <div class="radio-buttons-wrapper">
-        <input type="radio" class="radio-button" name="radioButtonTest" value="1" id="button1" checked  />
-        <label for="button1" onclick="use_tool('draw')"><i class="fas fa-pencil-alt"></i></label>
-        <input type="radio" class="radio-button" name="radioButtonTest" value="2" id="button2" />
-        <label for="button2" onclick="use_tool('erase');"><i class="fas fa-eraser"></i></label>
+      <div class="text-container">
+        <h3>Represent the shot path of the ball as a line on each of the two graphs below.</h3>
+        <p>The duration of the shot was 4.2 seconds.</p>
+        <p>Watch the video of the shot <a href="https://www.espn.com/nba/story/_/id/26735155/kawhi-ousts-sixers-unprecedented-shot">here</a>.</p>
       </div>
-      <div id="player">
-        <input type="button" id="btn" value="▶" class="play-button" />
-        <input class="slider-color" type="range" id="xpos" min="0" value="0" max="320" step="1">
-      </div>
-    </div>
-    <div class="chart-container">
-      <div class="wrapper">
-        <div class="chart-wrapper">
-          <canvas id="myChart" width="380" height="380"></canvas>
-          <div id="heightGraph"></div>
-          <canvas id="line"></canvas>
+      <div class="controls-container">
+        <div class="radio-buttons-wrapper">
+          <input type="radio" class="radio-button" name="radioButtonTest" value="1" id="button1" checked  />
+          <label for="button1" onclick="use_tool('draw')"><i class="fas fa-pencil-alt"></i></label>
+          <input type="radio" class="radio-button" name="radioButtonTest" value="2" id="button2" />
+          <label for="button2" onclick="use_tool('erase');"><i class="fas fa-eraser"></i></label>
         </div>
-        <canvas id="draw"></canvas>
+        <div id="player">
+          <input type="button" id="btn" value="▶" class="play-button" />
+          <input class="slider-color" type="range" id="xpos" min="0" value="0" max="320" step="1">
+        </div>
       </div>
-      <div class="wrapper">
-        <div class="chart-wrapper">
-          <div id="distanceGraph"></div>
-            <canvas id="line2"></canvas>
+      <div class="chart-container">
+        <div class="wrapper">
+          <div class="chart-wrapper">
+            <canvas id="myChart" width="380" height="380"></canvas>
+            <div id="heightGraph"></div>
+            <canvas id="line"></canvas>
           </div>
-          <canvas id="draw2"></canvas>
+          <canvas id="draw"></canvas>
         </div>
+        <div class="wrapper">
+          <div class="chart-wrapper">
+            <div id="distanceGraph"></div>
+              <canvas id="line2"></canvas>
+            </div>
+            <canvas id="draw2"></canvas>
+          </div>
+        </div>
+        <div class="wrapper-2">
+          <canvas id="animation"></canvas>
+          <div id="grid"></div>
+        </div>
+        <a href="https://a.espncdn.com/photo/2019/0513/r542285_2_1296x729_16-9.jpg"><small>Image Reference</small></a>
+        <br />
+        <br />
+        <a href="https://www.espn.com/nba/story/_/id/26735155/kawhi-ousts-sixers-unprecedented-shot"><small>Story Reference</small></a>
       </div>
-      <div class="wrapper-2">
-        <canvas id="animation"></canvas>
-        <div id="grid"></div>
-      </div>
-    </div>  
+    </body>
     <script src="animation.js"></script>
     <script src="imageOverlayGrid.js"></script>
     <script src="heightGraph.js"></script>
