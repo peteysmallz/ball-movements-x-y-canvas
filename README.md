@@ -1,6 +1,6 @@
 # Sketching ball movements over time.
 
-A math and physics problem, where the student must draw the path of the ball by graphing the **x** and **y** positions over time.
+A math and physics problem, where the student must draw the path of the ball by graphing the **x** and **y** positions over time. [Live Demo](https://realnumbers.app/ball-movements-x-y-canvas/).
 
 ![enter image description here](http://petesmaluck.com/project.png)
 
