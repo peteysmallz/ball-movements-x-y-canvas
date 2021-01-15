@@ -109,9 +109,7 @@ canvas1.addEventListener('mousedown', (e) => {
     isDrawing = true;
   [lastX, lastY] = [e.offsetX, e.offsetY];
 });
-
 canvas1.addEventListener('mousemove', e => draw(e, context1, line, isDrawing));
-
 canvas1.addEventListener('mouseup', () => {
   isDrawing = false;
   if (tooltype == 'draw') {
@@ -121,8 +119,26 @@ canvas1.addEventListener('mouseup', () => {
     })
   }
 });
-
 canvas1.addEventListener('mouseout', () => {
+  isDrawing = false;
+});
+
+canvas1.addEventListener('touchstart', (e) => {
+    line = [];
+    isDrawing = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+canvas1.addEventListener('touchmove', e => draw(e, context1, line, isDrawing));
+canvas1.addEventListener('touchend', () => {
+  isDrawing = false;
+  if (tooltype == 'draw') {
+    ballAndLineArray.push({
+      line: computePoints(line),
+      ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
+    })
+  }
+});
+canvas1.addEventListener('touchend', () => {
   isDrawing = false;
 });
 
@@ -141,21 +157,38 @@ canvas2.addEventListener('mousedown', (e) => {
   isDrawing2 = true;
   [lastX, lastY] = [e.offsetX, e.offsetY];
 });
-
 canvas2.addEventListener('mousemove', e => {
   draw2(e, context2, line2, isDrawing2)
 });
-
 canvas2.addEventListener('mouseup', () => {
   isDrawing2 = false;
-
   ballAndLineArray2.push({
     line: computePoints(line2),
     ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
   })
 });
-
 canvas2.addEventListener('mouseout', () => {
+  isDrawing2 = false;
+});
+
+// Touch events
+
+canvas2.addEventListener('touchstart', (e) => {
+  line2 = [];
+  isDrawing2 = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+canvas2.addEventListener('touchmove', e => {
+  draw2(e, context2, line2, isDrawing2)
+});
+canvas2.addEventListener('touchend', () => {
+  isDrawing2 = false;
+  ballAndLineArray2.push({
+    line: computePoints(line2),
+    ball: new Ball(innerWidth / 2, innerHeight / 2, 11, 'orange')
+  })
+});
+canvas2.addEventListener('touchend', () => {
   isDrawing2 = false;
 });
 
